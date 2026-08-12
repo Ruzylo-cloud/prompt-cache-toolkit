@@ -1,15 +1,6 @@
 # Prompt Cache Toolkit
 
-Dead-simple library to maximize Claude API token efficiency with prompt caching. Perfect for building AI agents and applications that reuse context.
-
-## Why This Matters
-
-Prompt caching cuts token costs **60-90%** on repeated requests. This toolkit eliminates setup boilerplate.
-
-```javascript
-// Before: Resend 10KB context every request (~3,000 tokens wasted)
-// After: Cache once, reuse (~300 tokens per request)
-```
+Small helper for working with Claude's prompt-caching feature. Wraps a piece of text (system instructions, documents, etc.) so it can be reused across requests with the `cache_control` marker Claude's API expects, and gives you simple bookkeeping around cache hits if you feed it usage data.
 
 ## Quick Start
 
@@ -19,8 +10,9 @@ npm install prompt-cache-toolkit
 
 ```javascript
 const { createCachedPrompt } = require('prompt-cache-toolkit');
+const Anthropic = require('@anthropic-ai/sdk');
 
-const model = new Claude({
+const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
@@ -32,24 +24,24 @@ You are a code reviewer. Review this code for:
 - Best practices
 `);
 
-// Reuse across many requests
-const reviews = await Promise.all([
-  model.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 1024,
-    system: cached.asSystemPrompt(),
-    messages: [{ role: 'user', content: codeSnippet1 }],
-  }),
-  model.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 1024,
-    system: cached.asSystemPrompt(),
-    messages: [{ role: 'user', content: codeSnippet2 }],
-  }),
-]);
+const response = await client.messages.create({
+  model: 'claude-sonnet-5',
+  max_tokens: 1024,
+  system: cached.asSystemPrompt(),
+  messages: [{ role: 'user', content: codeSnippet1 }],
+});
 
-console.log(`Saved: ${cached.tokensSaved()} tokens`);
+// Feed the API's usage block back in if you want hit-rate/savings tracking
+cached.recordUsage(response.usage);
+
+console.log(`Estimated tokens saved: ${cached.tokensSaved()}`);
 ```
+
+## What it actually does
+
+- Formats a string into the `cache_control: { type: 'ephemeral' }` shape Claude's Messages API expects for prompt caching.
+- Warns (via `console.warn`) if the content looks larger than a configurable token estimate.
+- If — and only if — you call `.recordUsage()` with the `usage` object from each API response, it keeps a running count of cache creates vs. cache reads, and can report a hit rate and an estimated token savings. Nothing is tracked automatically; the library has no visibility into your API calls unless you feed it the usage data yourself.
 
 ## Use Cases
 
@@ -66,25 +58,23 @@ Returns a cache-aware prompt wrapper.
 
 **Options:**
 - `maxTokens?: number` – Warn if cached content exceeds this (default: 8000)
-- `ttl?: number` – Seconds before cache expires (default: 3600)
+- `ttl?: number` – Stored on the instance but not currently enforced anywhere in this library; it's advisory only (Claude's server-side cache TTL is controlled by Anthropic, not by this option).
 
 **Methods:**
-- `.asSystemPrompt()` – Format for Claude system parameter
-- `.tokensSaved()` – Estimated tokens saved from cache hits
-- `.hitRate()` – Cache effectiveness (0–1)
-
-## Benchmarks
-
-| Scenario | Tokens (Uncached) | Tokens (Cached) | Savings |
-|----------|-------------------|-----------------|---------|
-| 10 reviews, 5KB context | 35,000 | 6,200 | 82% |
-| 100 document queries, 20KB context | 250,000 | 28,000 | 89% |
-| Chatbot with 50KB knowledge | 400,000/month | 50,000/month | 87.5% |
+- `.asSystemPrompt()` – Format for Claude's `system` parameter
+- `.recordUsage(usage)` – Feed in a response's `usage` object to update stats. Required before `.hitRate()` or `.tokensSaved()` will report anything meaningful.
+- `.tokensSaved()` – An *estimate* based on recorded cache-read vs. cache-creation token averages, not a value returned by the API.
+- `.hitRate()` – Cache hits / total recorded requests (0–1). Only reflects calls you've passed to `.recordUsage()`.
+- `.getStats()` – Returns the raw counters (`cacheCreationTokens`, `cacheReadTokens`, `totalHits`, `totalRequests`).
 
 ## Contributing
 
-Issues and PRs welcome. This is actively maintained.
+Issues and PRs welcome.
 
 ## License
 
 MIT
+
+---
+
+Sponsored by [Ferrow](https://ferrow.ai)

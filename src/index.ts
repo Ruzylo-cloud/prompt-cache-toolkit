@@ -76,7 +76,7 @@ export class CachedPrompt {
     return this.stats.totalRequests === 0 ? 0 : this.stats.totalHits / this.stats.totalRequests;
   }
 
-  stats(): CachedPromptStats {
+  getStats(): CachedPromptStats {
     return { ...this.stats };
   }
 }
