@@ -1,4 +1,5 @@
 # Prompt Cache Toolkit
+![CI](https://github.com/FerrowAI/github-awards-repo/actions/workflows/ci.yml/badge.svg)
 
 Small helper for working with Claude's prompt-caching feature. Wraps a piece of text (system instructions, documents, etc.) so it can be reused across requests with the `cache_control` marker Claude's API expects, and gives you simple bookkeeping around cache hits if you feed it usage data.
 
