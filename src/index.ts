@@ -84,3 +84,12 @@ export class CachedPrompt {
 export function createCachedPrompt(content: string, options?: CacheOptions): CachedPrompt {
   return new CachedPrompt(content, options);
 }
+
+export enum CacheStrategy {
+  EPHEMERAL = 'ephemeral',
+  PERSISTENT = 'persistent',
+}
+
+export interface AdvancedCacheOptions extends CacheOptions {
+  strategy?: CacheStrategy;
+}
