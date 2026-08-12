@@ -1,0 +1,16 @@
+# prompt-cache-toolkit
+> Maximize Claude API token efficiency with prompt caching
+
+Small helper for working with Claude's prompt-caching feature. Wraps a piece of text (system instructions, documents, etc.) so it can be reused across requests with the `cache_control` marker Claude's API expects, and gives you simple bookkeeping around cache hits if you feed it usage data. ```bash npm install prompt-cache-toolkit
+
+## API
+- `CacheOptions`
+- `CachedPromptStats`
+- `CachedPrompt`
+- `createCachedPrompt`
+- `AdvancedCacheOptions`
+
+## Install
+Each library is a standalone GitHub repo under github.com/Ruzylo-cloud.
+
+Part of the Ferrow open-source toolkit: https://github.com/Ruzylo-cloud/ferrow-toolkit — sponsored by https://ferrow.ai
