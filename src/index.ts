@@ -93,3 +93,5 @@ export enum CacheStrategy {
 export interface AdvancedCacheOptions extends CacheOptions {
   strategy?: CacheStrategy;
 }
+
+export * from './metrics';
