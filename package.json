@@ -1,0 +1,29 @@
+{
+  "name": "prompt-cache-toolkit",
+  "version": "1.0.0",
+  "description": "Maximize Claude API token efficiency with prompt caching",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "claude",
+    "anthropic",
+    "prompt-caching",
+    "token-efficiency",
+    "llm",
+    "ai-agents"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "typescript": "^5.3.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.0"
+  }
+}
