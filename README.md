@@ -6,7 +6,7 @@ Small helper for working with Claude's prompt-caching feature. Wraps a piece of 
 ## Quick Start
 
 ```bash
-npm install prompt-cache-toolkit
+npm install @ferrow/prompt-cache-toolkit
 ```
 
 ```javascript

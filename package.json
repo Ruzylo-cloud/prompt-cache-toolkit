@@ -1,5 +1,5 @@
 {
-  "name": "prompt-cache-toolkit",
+  "name": "@ferrow/prompt-cache-toolkit",
   "version": "1.0.0",
   "description": "Maximize Claude API token efficiency with prompt caching",
   "main": "dist/index.js",
